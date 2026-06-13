@@ -74,55 +74,46 @@ tr:hover { background: #fefaf7; }
 </div>
 
 <script>
-const API = '/api/register';
-const KEY = 'yoga2026';
+var STORE = 'yoga_signup_data';
+var MAX = 20;
 
-async function load() {
-  try {
-    const res = await fetch(API + '?key=' + KEY);
-    const data = await res.json();
-
-    document.getElementById('toolbar').innerHTML = `
-      <div class="info">
-        已报名 <strong>${data.count}</strong> / ${data.max} 人
-        <span class="left">（剩余 ${data.max - data.count} 个名额）</span>
-      </div>
-      <button onclick="load()">🔄 刷新</button>
-    `;
-
-    const list = data.registrations;
-    if (!list || list.length === 0) {
-      document.getElementById('tableArea').innerHTML = '<div class="empty">暂无报名记录</div>';
-      return;
-    }
-    const rows = list.map((r, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${esc(r.name)}</td>
-        <td>${esc(r.phone)}</td>
-        <td>${esc(r.organization || '-')}</td>
-        <td>${esc(r.created_at)}</td>
-        <td><button class="btn-del" onclick="del('${esc(r.phone)}')">删除</button></td>
-      </tr>
-    `).join('');
-    document.getElementById('tableArea').innerHTML = `
-      <table>
-        <thead><tr><th>#</th><th>姓名</th><th>手机号</th><th>单位</th><th>报名时间</th><th>操作</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    `;
-  } catch(e) {
-    document.getElementById('tableArea').innerHTML = '<div class="err-msg">❌ 加载失败，请 <a href="javascript:load()" style="color:#c94043">重试</a></div>';
-  }
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORE)) || []; }
+  catch(e) { return []; }
 }
 
-async function del(phone) {
-  if (!confirm('确定删除 ' + phone + ' 的报名信息吗？')) return;
-  try {
-    const res = await fetch(API + '?key=' + KEY + '&phone=' + encodeURIComponent(phone), { method: 'DELETE' });
-    if (res.ok) { load(); }
-    else { const d = await res.json(); alert('删除失败: ' + d.error); }
-  } catch(e) { alert('网络错误'); }
+function saveData(list) { localStorage.setItem(STORE, JSON.stringify(list)); }
+
+function load() {
+  var list = loadData();
+  document.getElementById('toolbar').innerHTML =
+    '<div class="info">已报名 <strong>' + list.length + '</strong> / ' + MAX + ' 人<span class="left">（剩余 ' + (MAX - list.length) + ' 个名额）</span></div>' +
+    '<button onclick="load()">🔄 刷新</button>';
+
+  if (!list.length) {
+    document.getElementById('tableArea').innerHTML = '<div class="empty">暂无报名记录</div>';
+    return;
+  }
+  var rows = list.map(function(r, i) {
+    return '<tr>' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td>' + esc(r.name) + '</td>' +
+      '<td>' + esc(r.phone) + '</td>' +
+      '<td>' + esc(r.organization || '-') + '</td>' +
+      '<td>' + esc(r.time) + '</td>' +
+      '<td><button class="btn-del" onclick="del(' + i + ')">删除</button></td>' +
+      '</tr>';
+  }).join('');
+  document.getElementById('tableArea').innerHTML =
+    '<table><thead><tr><th>#</th><th>姓名</th><th>手机号</th><th>单位</th><th>报名时间</th><th>操作</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function del(idx) {
+  if (!confirm('确定删除该报名信息吗？')) return;
+  var list = loadData();
+  list.splice(idx, 1);
+  saveData(list);
+  load();
 }
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }

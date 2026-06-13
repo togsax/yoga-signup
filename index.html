@@ -104,8 +104,6 @@ body {
 }
 .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(201,64,67,.35); }
 .btn-submit:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-.btn-submit .spin { display: inline-block; animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .msg { padding: 12px 16px; border-radius: 12px; font-size: .88rem; margin-bottom: 16px; }
 .msg-err { background: #fff0ef; color: #b5393b; border: 1px solid #ffd4d0; }
@@ -186,80 +184,61 @@ body {
 </footer>
 
 <script>
-const API = 'https://capable-malabi-3f0cec.netlify.app/.netlify/functions/register';
-const MAX = 20;
-let total = 0;
+var STORE = 'yoga_signup_data';
+var MAX = 20;
 
-// 从后端加载报名人数
-(async function init() {
-  try {
-    const res = await fetch(API + '?key=yoga2026');
-    if (res.ok) {
-      const data = await res.json();
-      total = data.count;
-      updateBar();
-    }
-  } catch(e) {
-    document.getElementById('barText').textContent = '报名进行中';
-  }
-  if (total >= MAX) showFull();
-})();
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE)) || []; }
+  catch(e) { return []; }
+}
+function save(list) { localStorage.setItem(STORE, JSON.stringify(list)); }
 
 function updateBar() {
+  var list = load();
+  var total = list.length;
   var pct = total / MAX * 100;
   document.getElementById('barFill').style.width = pct + '%';
   var left = MAX - total;
   document.getElementById('barText').innerHTML =
     '<span class="num">' + total + '</span> / ' + MAX + ' 人' +
     (left > 0 ? ' <span class="left">（剩' + left + '个名额）</span>' : ' <span style="color:#c94043">（已满）</span>');
+  if (total >= MAX) {
+    document.getElementById('btnSubmit').disabled = true;
+    document.getElementById('formMsg').innerHTML = '<div class="msg msg-info">🌸 名额已满，感谢大家的热情参与！</div>';
+  }
 }
 
-function showFull() {
-  document.getElementById('btnSubmit').disabled = true;
-  document.getElementById('formMsg').innerHTML = '<div class="msg msg-info">🌸 名额已满，感谢大家的热情参与！</div>';
-}
-
-async function submitForm() {
+function submitForm() {
   var name = document.getElementById('inpName').value.trim();
   var phone = document.getElementById('inpPhone').value.trim();
   var org = document.getElementById('inpOrg').value.trim();
   var msgEl = document.getElementById('formMsg');
-  var btn = document.getElementById('btnSubmit');
 
   if (!name) { msgEl.innerHTML = '<div class="msg msg-err">请输入姓名</div>'; return; }
   if (!phone) { msgEl.innerHTML = '<div class="msg msg-err">请输入手机号</div>'; return; }
   if (!/^1[3-9]\d{9}$/.test(phone)) { msgEl.innerHTML = '<div class="msg msg-err">请输入正确的11位手机号</div>'; return; }
   if (!org) { msgEl.innerHTML = '<div class="msg msg-err">请输入单位名称</div>'; return; }
 
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin">⏳</span> 提交中...';
-  msgEl.innerHTML = '';
-
-  try {
-    var res = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, organization: org })
-    });
-    var data = await res.json();
-    if (res.ok) {
-      msgEl.innerHTML = '<div class="msg msg-ok">✅ 报名成功！6月23日中午见～</div>';
-      document.getElementById('inpName').value = '';
-      document.getElementById('inpPhone').value = '';
-      document.getElementById('inpOrg').value = '';
-      total = MAX - data.remaining;
-      updateBar();
-      if (data.remaining <= 0) showFull();
-    } else {
-      msgEl.innerHTML = '<div class="msg msg-err">' + data.error + '</div>';
-    }
-  } catch(e) {
-    msgEl.innerHTML = '<div class="msg msg-err">网络错误，请稍后重试</div>';
+  var list = load();
+  if (list.length >= MAX) { msgEl.innerHTML = '<div class="msg msg-err">名额已满</div>'; return; }
+  if (list.find(function(r) { return r.phone === phone; })) {
+    msgEl.innerHTML = '<div class="msg msg-err">该手机号已报名，请勿重复提交</div>'; return;
   }
 
-  btn.disabled = (total >= MAX);
-  btn.textContent = '确认报名';
+  list.unshift({
+    name: name, phone: phone, organization: org,
+    time: new Date().toLocaleString('zh-CN')
+  });
+  save(list);
+
+  msgEl.innerHTML = '<div class="msg msg-ok">✅ 报名成功！6月23日中午见～</div>';
+  document.getElementById('inpName').value = '';
+  document.getElementById('inpPhone').value = '';
+  document.getElementById('inpOrg').value = '';
+  updateBar();
 }
+
+updateBar();
 </script>
 
 </body>
