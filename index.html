@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>虎丘居委 · 商圈合伙人 | 午间放松瑜伽</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧘</text></svg>">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: linear-gradient(180deg, #fef9f6 0%, #fdf4ed 30%, #fef0e4 100%);
+  color: #2d2420; line-height: 1.7; min-height: 100vh;
+}
+.bg-deco {
+  position: fixed; pointer-events: none; z-index: 0; overflow: hidden;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+.bg-deco .circle {
+  position: absolute; border-radius: 50%; opacity: .06;
+  animation: floatCircle 22s ease-in-out infinite;
+}
+.bg-deco .circle:nth-child(1) { width: 340px; height: 340px; background: #c94043; top: -100px; right: -70px; }
+.bg-deco .circle:nth-child(2) { width: 220px; height: 220px; background: #d4a853; bottom: 8%; left: -70px; animation-delay: -8s; }
+.bg-deco .circle:nth-child(3) { width: 170px; height: 170px; background: #c94043; top: 45%; right: 8%; animation-delay: -16s; }
+@keyframes floatCircle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-35px) scale(1.12); }
+}
+
+.hero {
+  position: relative; z-index: 1;
+  background: linear-gradient(135deg, #9b2d30 0%, #c94043 35%, #d4703e 70%, #d4a853 100%);
+  color: #fff; text-align: center; padding: 50px 20px 44px;
+  border-radius: 0 0 40px 40px; overflow: hidden;
+}
+.hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: rgba(255,255,255,.05); border-radius: 50%; }
+.hero::after  { content: ''; position: absolute; bottom: -40px; left: -40px; width: 140px; height: 140px; background: rgba(255,255,255,.04); border-radius: 50%; }
+.hero * { position: relative; z-index: 1; }
+.hero-logo {
+  display: inline-block; background: rgba(255,255,255,.18); backdrop-filter: blur(4px);
+  padding: 7px 22px; border-radius: 22px; font-size: .88rem; letter-spacing: 1px; margin-bottom: 20px;
+}
+.hero h1 { font-size: 1.9rem; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; }
+.hero .sub { font-size: 1rem; opacity: .88; margin-bottom: 24px; }
+.hero-info { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.hero-info .tag {
+  background: rgba(255,255,255,.16); backdrop-filter: blur(4px);
+  padding: 10px 20px; border-radius: 14px; font-size: .93rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.tag .emoji { font-size: 1.4rem; }
+
+.progress-wrap { position: relative; z-index: 1; max-width: 700px; margin: -18px auto 0; padding: 0 20px; }
+.progress-card {
+  background: #fff; border-radius: 16px; padding: 18px 24px;
+  box-shadow: 0 4px 20px rgba(201,64,67,.1);
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.progress-bar-outer { flex: 1; min-width: 140px; height: 10px; background: #fce8e6; border-radius: 5px; overflow: hidden; }
+.progress-bar-inner { height: 100%; background: linear-gradient(90deg, #c94043, #d4a853); border-radius: 5px; transition: width .5s ease; }
+.progress-text { font-size: .9rem; font-weight: 600; white-space: nowrap; }
+.progress-text .num { color: #c94043; font-size: 1.2rem; }
+.progress-text .left { color: #d4703e; }
+
+.main { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 28px 18px 80px; }
+
+.section {
+  background: #fff; border-radius: 20px; padding: 28px 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.035); margin-bottom: 20px;
+}
+.section h2 {
+  font-size: 1.15rem; font-weight: 700; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px; color: #6b2022;
+}
+.section h2 .icon { font-size: 1.5rem; }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.detail-card {
+  background: #fefaf7; border: 1px solid #f5e0d2; border-radius: 12px; padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.detail-card .d-icon { font-size: 1.7rem; flex-shrink: 0; }
+.detail-card .d-title { font-size: .8rem; color: #9b7a6e; }
+.detail-card .d-value { font-size: .93rem; font-weight: 700; color: #2d2420; }
+
+.form-row { margin-bottom: 16px; }
+.form-row label { display: block; font-size: .88rem; font-weight: 600; color: #5c3d36; margin-bottom: 6px; }
+.form-row label .req { color: #c94043; }
+.form-row input {
+  width: 100%; padding: 12px 16px; font-size: .95rem; font-family: inherit;
+  border: 2px solid #f0ddd4; border-radius: 12px; outline: none;
+  transition: border-color .2s, box-shadow .2s; background: #fefaf7;
+}
+.form-row input:focus { border-color: #c94043; box-shadow: 0 0 0 3px rgba(201,64,67,.08); }
+
+.btn-submit {
+  width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; font-family: inherit;
+  color: #fff; border: none; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(135deg, #c94043, #d4703e);
+  letter-spacing: 1px; transition: transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(201,64,67,.25);
+}
+.btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(201,64,67,.35); }
+.btn-submit:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+.btn-submit .spin { display: inline-block; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.msg { padding: 12px 16px; border-radius: 12px; font-size: .88rem; margin-bottom: 16px; }
+.msg-err { background: #fff0ef; color: #b5393b; border: 1px solid #ffd4d0; }
+.msg-ok  { background: #edfff5; color: #1e7e4a; border: 1px solid #c3f0d1; }
+.msg-info { background: #fef8f2; color: #8c6550; text-align: center; padding: 24px; font-size: 1rem; border-radius: 14px; }
+
+.footer { text-align: center; padding: 10px 20px 36px; font-size: .8rem; color: #b8a095; position: relative; z-index: 1; line-height: 1.8; }
+.footer .org { color: #9b2d30; font-weight: 600; }
+
+@media (max-width: 600px) {
+  .hero { padding: 38px 16px 34px; border-radius: 0 0 28px 28px; }
+  .hero h1 { font-size: 1.4rem; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .progress-card { padding: 14px 16px; }
+  .section { padding: 20px 16px; border-radius: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-deco"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>
+
+<header class="hero">
+  <div class="hero-logo">虎丘居委「商圈合伙人」首场白领活动</div>
+  <h1>午间放松瑜伽</h1>
+  <p class="sub">商圈聚力，白领入社 —— 在午间一小时里，遇见更好的自己</p>
+  <div class="hero-info">
+    <div class="tag"><span class="emoji">📅</span> 6月23日（周一）</div>
+    <div class="tag"><span class="emoji">⏰</span> 12:15 - 13:15</div>
+    <div class="tag"><span class="emoji">📍</span> 虎丘路78号洛克安仁大楼4楼</div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-card">
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="barFill" style="width:0%"></div></div>
+    <div class="progress-text" id="barText">加载中...</div>
+  </div>
+</div>
+
+<main class="main">
+
+  <section class="section">
+    <h2><span class="icon">📋</span> 活动详情</h2>
+    <div class="detail-grid">
+      <div class="detail-card"><span class="d-icon">📅</span><div><div class="d-title">日期</div><div class="d-value">6月23日（周一）</div></div></div>
+      <div class="detail-card"><span class="d-icon">⏰</span><div><div class="d-title">时间</div><div class="d-value">中午 12:15 - 13:15</div></div></div>
+      <div class="detail-card"><span class="d-icon">📍</span><div><div class="d-title">地点</div><div class="d-value">虎丘路78号洛克安仁大楼4楼</div></div></div>
+      <div class="detail-card"><span class="d-icon">👥</span><div><div class="d-title">限额</div><div class="d-value">20 人</div></div></div>
+    </div>
+    <div style="margin-top:18px;background:linear-gradient(135deg,#fff8f0,#fff3e8);border:2px solid #f0c8a0;border-radius:14px;padding:18px 20px;">
+      <div style="font-weight:700;font-size:.9rem;color:#c94043;margin-bottom:10px;">⚠️ 注意事项</div>
+      <div style="font-size:.88rem;color:#5c3d36;line-height:2;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="background:#c94043;color:#fff;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:4px;">重要</span>
+          <span>🧘 <strong>瑜伽垫需自带</strong>，现场不提供</span>
+        </div>
+        <div>👕 建议穿着宽松舒适的衣服</div>
+        <div>🆓 社区公益活动，全程免费</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="formSection">
+    <h2><span class="icon">✍️</span> 立即报名</h2>
+    <div id="formMsg"></div>
+    <div class="form-row"><label>姓名 <span class="req">*</span></label><input id="inpName" type="text" placeholder="请输入您的姓名"></div>
+    <div class="form-row"><label>手机号 <span class="req">*</span></label><input id="inpPhone" type="tel" placeholder="请输入11位手机号" maxlength="11"></div>
+    <div class="form-row"><label>单位 <span class="req">*</span></label><input id="inpOrg" type="text" placeholder="请输入您的公司/单位名称"></div>
+    <button class="btn-submit" id="btnSubmit" onclick="submitForm()">确认报名</button>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="org">虎丘居民区 · 商圈合伙人</span><br>
+  商圈聚力 · 白领入社 · 共建共享美好社区
+</footer>
+
+<script>
+const API = 'https://capable-malabi-3f0cec.netlify.app/.netlify/functions/register';
+const MAX = 20;
+let total = 0;
+
+// 从后端加载报名人数
+(async function init() {
+  try {
+    const res = await fetch(API + '?key=yoga2026');
+    if (res.ok) {
+      const data = await res.json();
+      total = data.count;
+      updateBar();
+    }
+  } catch(e) {
+    document.getElementById('barText').textContent = '报名进行中';
+  }
+  if (total >= MAX) showFull();
+})();
+
+function updateBar() {
+  var pct = total / MAX * 100;
+  document.getElementById('barFill').style.width = pct + '%';
+  var left = MAX - total;
+  document.getElementById('barText').innerHTML =
+    '<span class="num">' + total + '</span> / ' + MAX + ' 人' +
+    (left > 0 ? ' <span class="left">（剩' + left + '个名额）</span>' : ' <span style="color:#c94043">（已满）</span>');
+}
+
+function showFull() {
+  document.getElementById('btnSubmit').disabled = true;
+  document.getElementById('formMsg').innerHTML = '<div class="msg msg-info">🌸 名额已满，感谢大家的热情参与！</div>';
+}
+
+async function submitForm() {
+  var name = document.getElementById('inpName').value.trim();
+  var phone = document.getElementById('inpPhone').value.trim();
+  var org = document.getElementById('inpOrg').value.trim();
+  var msgEl = document.getElementById('formMsg');
+  var btn = document.getElementById('btnSubmit');
+
+  if (!name) { msgEl.innerHTML = '<div class="msg msg-err">请输入姓名</div>'; return; }
+  if (!phone) { msgEl.innerHTML = '<div class="msg msg-err">请输入手机号</div>'; return; }
+  if (!/^1[3-9]\d{9}$/.test(phone)) { msgEl.innerHTML = '<div class="msg msg-err">请输入正确的11位手机号</div>'; return; }
+  if (!org) { msgEl.innerHTML = '<div class="msg msg-err">请输入单位名称</div>'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⏳</span> 提交中...';
+  msgEl.innerHTML = '';
+
+  try {
+    var res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, phone: phone, organization: org })
+    });
+    var data = await res.json();
+    if (res.ok) {
+      msgEl.innerHTML = '<div class="msg msg-ok">✅ 报名成功！6月23日中午见～</div>';
+      document.getElementById('inpName').value = '';
+      document.getElementById('inpPhone').value = '';
+      document.getElementById('inpOrg').value = '';
+      total = MAX - data.remaining;
+      updateBar();
+      if (data.remaining <= 0) showFull();
+    } else {
+      msgEl.innerHTML = '<div class="msg msg-err">' + data.error + '</div>';
+    }
+  } catch(e) {
+    msgEl.innerHTML = '<div class="msg msg-err">网络错误，请稍后重试</div>';
+  }
+
+  btn.disabled = (total >= MAX);
+  btn.textContent = '确认报名';
+}
+</script>
+
+</body>
+</html>

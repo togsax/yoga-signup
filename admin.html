@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 · 商圈合伙人午间瑜伽</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: linear-gradient(180deg, #fef9f6 0%, #fef0e4 100%);
+  color: #2d2420; line-height: 1.7; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, #9b2d30, #c94043, #d4703e);
+  color: #fff; text-align: center; padding: 28px 20px;
+  border-radius: 0 0 32px 32px;
+}
+.header h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; }
+.header .sub { font-size: .82rem; opacity: .8; margin-top: 4px; }
+
+.main { max-width: 960px; margin: 0 auto; padding: 24px 16px 60px; }
+
+.toolbar {
+  background: #fff; border-radius: 16px; padding: 18px 22px;
+  box-shadow: 0 2px 14px rgba(0,0,0,.035); margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.toolbar .info { font-size: 1rem; }
+.toolbar .info strong { color: #c94043; font-size: 1.25rem; }
+.toolbar .info .left { color: #d4703e; }
+.toolbar button {
+  padding: 9px 22px; font-size: .9rem; font-weight: 600;
+  color: #fff; background: linear-gradient(135deg, #c94043, #d4703e);
+  border: none; border-radius: 10px; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(201,64,67,.2);
+}
+.toolbar button:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,64,67,.3); }
+
+.table-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 14px rgba(0,0,0,.035); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { text-align: left; padding: 12px 12px; border-bottom: 2px solid #d4a853; color: #5c3d36; font-weight: 700; white-space: nowrap; }
+td { padding: 12px 12px; border-bottom: 1px solid #f5e0d2; }
+tr:hover { background: #fefaf7; }
+
+.btn-del {
+  padding: 5px 16px; font-size: .82rem; font-weight: 600;
+  color: #c94043; background: #fff; border: 1.5px solid #c94043;
+  border-radius: 8px; cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+}
+.btn-del:hover { background: #c94043; color: #fff; }
+
+.empty { text-align: center; padding: 50px 20px; color: #b8a095; font-size: 1rem; }
+.loading { text-align: center; padding: 50px 20px; color: #b8a095; }
+.err-msg { background: #fff0ef; color: #b5393b; padding: 14px 18px; border-radius: 12px; margin-bottom: 16px; }
+
+@media (max-width: 600px) {
+  th, td { padding: 8px 5px; font-size: .78rem; }
+  .header { border-radius: 0 0 22px 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 商圈合伙人 · 午间瑜伽</h1>
+  <div class="sub">虎丘居民区 · 报名管理后台</div>
+</div>
+
+<div class="main">
+  <div id="toolbar" class="toolbar"><div class="loading">加载中...</div></div>
+  <div id="tableArea" class="table-card"><div class="loading">加载中...</div></div>
+</div>
+
+<script>
+const API = '/api/register';
+const KEY = 'yoga2026';
+
+async function load() {
+  try {
+    const res = await fetch(API + '?key=' + KEY);
+    const data = await res.json();
+
+    document.getElementById('toolbar').innerHTML = `
+      <div class="info">
+        已报名 <strong>${data.count}</strong> / ${data.max} 人
+        <span class="left">（剩余 ${data.max - data.count} 个名额）</span>
+      </div>
+      <button onclick="load()">🔄 刷新</button>
+    `;
+
+    const list = data.registrations;
+    if (!list || list.length === 0) {
+      document.getElementById('tableArea').innerHTML = '<div class="empty">暂无报名记录</div>';
+      return;
+    }
+    const rows = list.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${esc(r.name)}</td>
+        <td>${esc(r.phone)}</td>
+        <td>${esc(r.organization || '-')}</td>
+        <td>${esc(r.created_at)}</td>
+        <td><button class="btn-del" onclick="del('${esc(r.phone)}')">删除</button></td>
+      </tr>
+    `).join('');
+    document.getElementById('tableArea').innerHTML = `
+      <table>
+        <thead><tr><th>#</th><th>姓名</th><th>手机号</th><th>单位</th><th>报名时间</th><th>操作</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  } catch(e) {
+    document.getElementById('tableArea').innerHTML = '<div class="err-msg">❌ 加载失败，请 <a href="javascript:load()" style="color:#c94043">重试</a></div>';
+  }
+}
+
+async function del(phone) {
+  if (!confirm('确定删除 ' + phone + ' 的报名信息吗？')) return;
+  try {
+    const res = await fetch(API + '?key=' + KEY + '&phone=' + encodeURIComponent(phone), { method: 'DELETE' });
+    if (res.ok) { load(); }
+    else { const d = await res.json(); alert('删除失败: ' + d.error); }
+  } catch(e) { alert('网络错误'); }
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+load();
+</script>
+
+</body>
+</html>
